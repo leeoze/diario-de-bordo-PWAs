@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Registre suas atividades diárias com o Diário de Bordo." />
+
+  <!-- Cor da barra de status do navegador/PWA — atualizada via JS ao trocar o tema -->
+  <meta name="theme-color" content="#1a1a2e" id="meta-theme-color" />
+
+  <!-- Configuração para instalação no iOS e Android (padrão atual) -->
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Diário" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+
+  <!-- Manifesto do PWA: define nome, ícones, cores e modo de exibição -->
+  <link rel="manifest" href="manifest.json" />
+
+  <title>Diário de Bordo</title>
+
+  <!-- Google Fonts: Playfair Display (títulos) + (corpo de texto) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+
+  <!-- CSS principal -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- =====================================================
+       HEADER PARA DISPOSITIVOS MÓVEIS
+       Visível apenas em telas ≤ 768px (via CSS media query)
+  ====================================================== -->
+  <header class="mobile-header">
+    <!-- Botão hamburger — abre/fecha a sidebar -->
+    <button class="btn-menu" id="btnMenu" aria-label="Abrir menu">☰</button>
+    <span class="mobile-header-title">Diário de Bordo</span>
+    <!-- Botão de tema alternativo para mobile -->
+    <button
+      id="btnThemeMobile"
+      aria-label="Alternar tema"
+      style="background:none;border:none;color:#f0e8d8;font-size:1.2rem;cursor:pointer;padding:6px;">
+      🌙
+    </button>
+  </header>
+
+  <!-- Overlay escuro exibido ao abrir a sidebar no mobile -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <div class="app-wrapper">
+
+    <!-- =====================================================
+         SIDEBAR LATERAL
+         Fixa no desktop, deslizável no mobile
+    ====================================================== -->
+    <aside class="sidebar" id="sidebar" role="navigation" aria-label="Menu lateral">
+
+      <!-- Logotipo e título do aplicativo -->
+      <div class="sidebar-logo">
+        <img src="icons/icon-192.png" alt="Ícone Diário de Bordo" />
+        <div>
+          <div class="sidebar-title">Diário<br/>de Bordo</div>
+          <div class="sidebar-subtitle">Salvando suas memórias</div>
+        </div>
+      </div>
+
+      <!-- Painel de estatísticas — atualizado via JS -->
+      <div class="sidebar-stats">
+        <div class="stat-item">
+          <div class="stat-label">Total de notas</div>
+          <div class="stat-value" id="statTotal">0</div>
+        </div>
+      </div>
+
+      <!-- Rodapé da sidebar: instalar e alternar tema -->
+      <div class="sidebar-actions">
+        <!-- Botão de instalação do PWA:
+             aparece via JS quando o evento beforeinstallprompt é disparado
+             e é ocultado após a instalação (classe 'hidden') -->
+        <button class="btn-install hidden" id="btnInstall" aria-label="Instalar aplicativo">
+           Instalar Aplicativo
+        </button>
+
+        <!-- Botão de alternância de tema claro/escuro -->
+        <button class="btn-theme" id="btnTheme" aria-label="Alternar tema">
+          <span id="themeIcon">🌙</span>
+          <span id="themeLabel">Tema Escuro</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- =====================================================
+         CONTEÚDO PRINCIPAL
+    ====================================================== -->
+    <main class="main-content" role="main">
+
+      <!-- Cabeçalho com data atual e saudação -->
+      <header class="page-header">
+        <!-- Data por extenso — preenchida via JS -->
+        <div class="page-date" id="currentDate"></div>
+        <h1 class="page-title">Olá,<br/><em>comece suas anotações.</em></h1>
+      </header>
+
+      <!-- ---- Formulário para criar nova nota ---- -->
+      <section class="form-card" aria-label="Nova nota no diário">
+        <h2 class="form-title"><span>Nova Nota</span></h2>
+
+        <div class="form-grid">
+          <!-- Título da nota -->
+          <div class="form-group">
+            <label for="inputTitulo">Título</label>
+            <input
+              type="text"
+              id="inputTitulo"
+              placeholder="Título da nota..."
+              maxlength="100"
+              autocomplete="off" />
+          </div>
+
+          <!-- Data da nota -->
+          <div class="form-group">
+            <label for="inputData">Data</label>
+            <input type="date" id="inputData" />
+          </div>
+
+          <!-- Descrição (ocupa as duas colunas da grade) -->
+          <div class="form-group full">
+            <label for="inputDescricao">Descrição</label>
+            <textarea
+              id="inputDescricao"
+              placeholder="Descreva suas atividades do dia..."
+              maxlength="1000"></textarea>
+          </div>
+        </div>
+
+        <button class="btn-save" id="btnSalvar" aria-label="Salvar nota">
+          Salvar Nota
+        </button>
+      </section>
+
+      <!-- ---- Lista de notas registradas ---- -->
+      <section aria-label="Notas registradas">
+        <div class="entries-header">
+          <h2 class="entries-title">Registros</h2>
+          <!-- Contador atualizado via JS -->
+          <span class="entries-count" id="entriesCount">0 notas</span>
+        </div>
+
+        <!-- Campo de busca em tempo real -->
+        <div class="search-bar">
+          <span class="search-icon" aria-hidden="true">🔍</span>
+          <input
+            type="text"
+            id="inputBusca"
+            placeholder="Buscar nas notas..."
+            aria-label="Buscar notas"
+            autocomplete="off" />
+        </div>
+
+        <!-- Lista dinâmica de cards — populada via JS -->
+        <div class="entries-list" id="entriesList" aria-live="polite"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- =====================================================
+       TOAST DE NOTIFICAÇÃO
+       Exibido temporariamente via JS (classe 'show')
+  ====================================================== -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- =====================================================
+       MODAL DE CONFIRMAÇÃO DE EXCLUSÃO
+       Ativado via JS (classe 'active')
+  ====================================================== -->
+  <div
+    class="modal-overlay"
+    id="modalOverlay"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modalTitle">
+    <div class="modal">
+      <h3 id="modalTitle">Remover Nota</h3>
+      <p>Tem certeza que deseja remover esta nota? Esta ação não pode ser desfeita.</p>
+      <div class="modal-actions">
+        <button class="btn-cancel" id="btnCancelDelete">Cancelar</button>
+        <button class="btn-confirm-delete" id="btnConfirmDelete">Remover</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script principal da aplicação -->
+  <script src="script.js"></script>
+</body>
+</html>

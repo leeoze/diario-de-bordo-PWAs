@@ -1,0 +1,734 @@
+/* ============================================================
+   DIÁRIO DE BORDO — style.css
+   Folha de estilos principal da aplicação
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   VARIÁVEIS DE TEMA — claro e escuro
+   Todas as cores são controladas via CSS custom properties,
+   permitindo a troca de tema sem recarregar a página.
+------------------------------------------------------------ */
+:root {
+  --bg-primary:    #f7f3ec;
+  --bg-secondary:  #eee8dc;
+  --bg-card:       #ffffff;
+  --bg-sidebar:    #1a1a2e;
+  --text-primary:  #1a1a2e;
+  --text-secondary:#5a5068;
+  --text-muted:    #9b8fa8;
+  --accent-gold:   #c9a84c;
+  --accent-dark:   #a07830;
+  --accent-light:  #f0d98a;
+  --border:        #ddd6c8;
+  --shadow:        rgba(26,26,46,0.10);
+  --shadow-card:   rgba(26,26,46,0.08);
+  --danger:        #c0392b;
+  --danger-hover:  #e74c3c;
+  --input-bg:      #ffffff;
+  --scrollbar:     #c9a84c;
+  --overlay:       rgba(26,26,46,0.45);
+}
+
+/* Tema escuro — sobrescreve apenas as variáveis necessárias */
+[data-theme="dark"] {
+  --bg-primary:    #0f0f1a;
+  --bg-secondary:  #1a1a2e;
+  --bg-card:       #1e1e32;
+  --bg-sidebar:    #0a0a16;
+  --text-primary:  #f0e8d8;
+  --text-secondary:#b8a898;
+  --text-muted:    #7a6a7a;
+  --accent-gold:   #c9a84c;
+  --accent-dark:   #f0d98a;
+  --accent-light:  #a07830;
+  --border:        #2e2e4a;
+  --shadow:        rgba(0,0,0,0.40);
+  --shadow-card:   rgba(0,0,0,0.30);
+  --danger:        #e74c3c;
+  --danger-hover:  #ff6b5b;
+  --input-bg:      #252540;
+  --scrollbar:     #c9a84c;
+  --overlay:       rgba(0,0,0,0.60);
+}
+
+/* ------------------------------------------------------------
+   RESET E BASE
+------------------------------------------------------------ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Lato', sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  /* Transição suave ao trocar de tema */
+  transition: background-color 0.3s ease, color 0.3s ease;
+  overflow-x: hidden;
+}
+
+/* Scrollbar personalizada para navegadores WebKit */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-secondary); }
+::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 3px; }
+
+/* ------------------------------------------------------------
+   LAYOUT PRINCIPAL — sidebar fixa + conteúdo
+------------------------------------------------------------ */
+.app-wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ------------------------------------------------------------
+   SIDEBAR LATERAL
+------------------------------------------------------------ */
+.sidebar {
+  width: 260px;
+  background: var(--bg-sidebar);
+  display: flex;
+  flex-direction: column;
+  padding: 40px 24px 32px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 100;
+  border-right: 1px solid rgba(201,168,76,0.15);
+  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* Logo e título na sidebar */
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 40px;
+}
+
+.sidebar-logo img {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+}
+
+.sidebar-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #f0e8d8;
+  line-height: 1.2;
+}
+
+.sidebar-subtitle {
+  font-size: 0.72rem;
+  color: var(--accent-gold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* Bloco de estatísticas rápidas */
+.sidebar-stats {
+  background: rgba(201,168,76,0.10);
+  border: 1px solid rgba(201,168,76,0.20);
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 28px;
+}
+
+.stat-item { margin-bottom: 10px; }
+.stat-item:last-child { margin-bottom: 0; }
+
+.stat-label {
+  font-size: 0.7rem;
+  color: var(--accent-gold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.stat-value {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  color: #f0e8d8;
+  line-height: 1;
+}
+
+/* Área de ações no rodapé da sidebar */
+.sidebar-actions {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Botão de instalação do PWA */
+.btn-install {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, var(--accent-gold), var(--accent-dark));
+  color: #1a1a2e;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-family: 'Lato', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.btn-install:hover { opacity: 0.9; transform: translateY(-1px); }
+
+/* Oculta o botão quando o app já está instalado */
+.btn-install.hidden { display: none; }
+
+/* Botão de alternância de tema */
+.btn-theme {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #c8c0d8;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-family: 'Lato', sans-serif;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-theme:hover { background: rgba(255,255,255,0.10); }
+
+/* ------------------------------------------------------------
+   CONTEÚDO PRINCIPAL
+------------------------------------------------------------ */
+.main-content {
+  margin-left: 260px;
+  flex: 1;
+  padding: 40px 48px;
+  max-width: 1100px;
+}
+
+/* Cabeçalho da página com data e título */
+.page-header { margin-bottom: 36px; }
+
+.page-date {
+  font-size: 0.78rem;
+  color: var(--accent-gold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.page-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.15;
+}
+
+/* Destaque em itálico dourado no título */
+.page-title em {
+  font-style: italic;
+  color: var(--accent-gold);
+}
+
+/* ------------------------------------------------------------
+   CARD DO FORMULÁRIO DE NOVA ENTRADA
+------------------------------------------------------------ */
+.form-card {
+  background: var(--bg-card);
+  border-radius: 20px;
+  padding: 32px;
+  margin-bottom: 40px;
+  box-shadow: 0 4px 24px var(--shadow-card);
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Linha decorativa dourada no topo do card */
+.form-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-gold), var(--accent-light), var(--accent-gold));
+}
+
+.form-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  color: var(--text-primary);
+  margin-bottom: 22px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.form-title span { font-size: 1.2rem; }
+
+/* Grade de dois campos lado a lado */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+
+/* Ocupa as duas colunas (textarea) */
+.form-group.full { grid-column: 1 / -1; }
+
+/* Estilos de label */
+label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Estilos unificados dos campos de entrada */
+input[type="text"],
+input[type="date"],
+textarea {
+  background: var(--input-bg);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-family: 'Lato', sans-serif;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+  width: 100%;
+}
+
+/* Estado de foco com borda e halo dourado */
+input[type="text"]:focus,
+input[type="date"]:focus,
+textarea:focus {
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.15);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 110px;
+  line-height: 1.6;
+}
+
+/* Botão principal de salvar */
+.btn-save {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, var(--accent-gold), var(--accent-dark));
+  color: #1a1a2e;
+  border: none;
+  border-radius: 14px;
+  padding: 14px 30px;
+  font-family: 'Lato', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s, opacity 0.2s, box-shadow 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  box-shadow: 0 4px 16px rgba(201,168,76,0.30);
+}
+
+.btn-save:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(201,168,76,0.40);
+}
+
+.btn-save:active { transform: translateY(0); }
+
+/* ------------------------------------------------------------
+   LISTA DE ENTRADAS
+------------------------------------------------------------ */
+.entries-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.entries-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  color: var(--text-primary);
+}
+
+/* Contador de entradas (pill) */
+.entries-count {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  background: var(--bg-secondary);
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+}
+
+/* Barra de busca com ícone interno */
+.search-bar {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.search-bar input { padding-left: 42px; background: var(--bg-card); }
+
+.search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 1rem;
+  pointer-events: none;
+}
+
+/* Container vertical das entradas */
+.entries-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Card individual de cada entrada */
+.entry-card {
+  background: var(--bg-card);
+  border-radius: 18px;
+  padding: 24px 28px;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 12px var(--shadow-card);
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  transition: transform 0.2s, box-shadow 0.2s;
+  animation: slideIn 0.35s ease;
+}
+
+.entry-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px var(--shadow);
+}
+
+/* Animação de entrada ao adicionar novo card */
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Badge lateral com dia e mês */
+.entry-date-badge {
+  flex-shrink: 0;
+  width: 52px;
+  text-align: center;
+  background: linear-gradient(160deg, var(--accent-gold), var(--accent-dark));
+  border-radius: 12px;
+  padding: 10px 6px;
+  color: #1a1a2e;
+}
+
+.entry-date-day {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.entry-date-month {
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 2px;
+}
+
+/* Corpo textual do card */
+.entry-body { flex: 1; min-width: 0; }
+
+.entry-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  /* Trunca títulos muito longos */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.entry-desc {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  /* Limita a 3 linhas com reticências */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.entry-meta {
+  margin-top: 10px;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Botão de remover entrada */
+.btn-delete {
+  flex-shrink: 0;
+  background: none;
+  border: 1.5px solid var(--border);
+  color: var(--text-muted);
+  border-radius: 10px;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+  font-size: 1rem;
+}
+
+.btn-delete:hover {
+  background: rgba(192,57,43,0.08);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+/* Estado vazio — exibido quando não há entradas */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.empty-state-icon { font-size: 3.5rem; margin-bottom: 16px; opacity: 0.5; }
+
+.empty-state h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.empty-state p { font-size: 0.88rem; }
+
+/* ------------------------------------------------------------
+   TOAST DE NOTIFICAÇÃO (feedback ao usuário)
+------------------------------------------------------------ */
+.toast {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  background: var(--bg-sidebar);
+  color: #f0e8d8;
+  padding: 14px 22px;
+  border-radius: 14px;
+  font-size: 0.88rem;
+  border-left: 4px solid var(--accent-gold);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  z-index: 1000;
+  /* Estado inicial: fora da tela */
+  transform: translateY(80px);
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Classe adicionada via JS para exibir o toast */
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* ------------------------------------------------------------
+   MODAL DE CONFIRMAÇÃO DE EXCLUSÃO
+------------------------------------------------------------ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s;
+  backdrop-filter: blur(4px);
+}
+
+/* Classe adicionada via JS para mostrar o modal */
+.modal-overlay.active { opacity: 1; pointer-events: all; }
+
+.modal {
+  background: var(--bg-card);
+  border-radius: 20px;
+  padding: 36px 32px;
+  max-width: 400px;
+  width: 90%;
+  border: 1px solid var(--border);
+  box-shadow: 0 16px 48px var(--shadow);
+  transform: scale(0.92);
+  transition: transform 0.25s;
+}
+
+.modal-overlay.active .modal { transform: scale(1); }
+
+.modal h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: var(--text-primary);
+}
+
+.modal p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 28px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+/* Botão cancelar do modal */
+.btn-cancel {
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: 1.5px solid var(--border);
+  background: none;
+  color: var(--text-secondary);
+  font-family: 'Lato', sans-serif;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-cancel:hover { background: var(--bg-secondary); }
+
+/* Botão confirmar exclusão */
+.btn-confirm-delete {
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: none;
+  background: var(--danger);
+  color: #fff;
+  font-family: 'Lato', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-confirm-delete:hover { background: var(--danger-hover); }
+
+/* ------------------------------------------------------------
+   HEADER MÓVEL (visível apenas em telas pequenas)
+------------------------------------------------------------ */
+.mobile-header {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 60px;
+  background: var(--bg-sidebar);
+  z-index: 200;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  border-bottom: 1px solid rgba(201,168,76,0.2);
+}
+
+.mobile-header-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  color: #f0e8d8;
+}
+
+/* Botão hamburger do menu mobile */
+.btn-menu {
+  background: none;
+  border: none;
+  color: #f0e8d8;
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: 6px;
+  line-height: 1;
+}
+
+/* Overlay escuro para fechar a sidebar no mobile */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 99;
+}
+
+/* ------------------------------------------------------------
+   RESPONSIVIDADE — MOBILE (≤ 768px)
+------------------------------------------------------------ */
+@media (max-width: 768px) {
+  /* Mostra o header móvel */
+  .mobile-header { display: flex; }
+
+  /* Sidebar entra da esquerda no mobile */
+  .sidebar {
+    transform: translateX(-100%);
+    width: 280px;
+  }
+
+  /* Classe adicionada via JS ao abrir o menu */
+  .sidebar.open { transform: translateX(0); }
+
+  .sidebar-overlay.active { display: block; }
+
+  /* Ajusta espaçamento do conteúdo (compensando o header fixo) */
+  .main-content {
+    margin-left: 0;
+    padding: 80px 20px 32px;
+  }
+
+  /* Formulário em coluna única no mobile */
+  .form-grid { grid-template-columns: 1fr; }
+
+  .page-title { font-size: 1.6rem; }
+
+  .entry-card { padding: 18px; }
+
+  /* Toast ocupa a largura da tela no mobile */
+  .toast { left: 16px; right: 16px; bottom: 16px; }
+}
+
+/* Ajustes para telas muito pequenas */
+@media (max-width: 480px) {
+  .entry-date-badge { width: 44px; }
+  .entry-date-day { font-size: 1.2rem; }
+}
