@@ -732,3 +732,166 @@ textarea {
   .entry-date-badge { width: 44px; }
   .entry-date-day { font-size: 1.2rem; }
 }
+
+/* ============================================================
+   TELA DE BOAS-VINDAS
+   Cobre toda a tela ao abrir o app pela primeira vez.
+   Fica por cima de tudo usando z-index alto.
+   ============================================================ */
+
+/* Fundo escuro semitransparente que cobre a tela inteira */
+.boas-vindas-overlay {
+  position: fixed;         /* Fica fixo, não rola com a página */
+  inset: 0;                /* Atalho para top/right/bottom/left: 0 */
+  background: var(--bg-sidebar);
+  z-index: 999;            /* Fica acima de tudo (modal usa 500) */
+  display: flex;
+  align-items: center;     /* Centraliza verticalmente */
+  justify-content: center; /* Centraliza horizontalmente */
+  padding: 24px;
+
+  /* Animação de entrada — aparece suavemente */
+  animation: fadeIn 0.4s ease;
+}
+
+/* Quando o JS adiciona a classe 'oculto', some com animação */
+.boas-vindas-overlay.oculto {
+  animation: fadeOut 0.4s ease forwards;
+  pointer-events: none; /* Desativa cliques durante a saída */
+}
+
+/* Card branco centralizado com o formulário de nome */
+.boas-vindas-card {
+  background: var(--bg-card);
+  border-radius: 24px;
+  padding: 48px 40px;
+  max-width: 440px;
+  width: 100%;
+  text-align: center;
+  border: 1px solid var(--border);
+  box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+
+  /* Animação de entrada do card — sobe de baixo */
+  animation: slideUp 0.4s ease;
+}
+
+/* Ícone do app no topo do card */
+.boas-vindas-icone {
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  margin-bottom: 24px;
+}
+
+/* Título "Diário de Bordo" */
+.boas-vindas-titulo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+
+/* Pergunta "Olá! Qual o seu nome?" */
+.boas-vindas-pergunta {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-bottom: 28px;
+  line-height: 1.5;
+}
+
+/* Campo de texto para digitar o nome */
+.boas-vindas-input {
+  width: 100%;
+  background: var(--input-bg);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 18px;
+  font-family: 'Lato', sans-serif;
+  font-size: 1rem;
+  color: var(--text-primary);
+  text-align: center;     /* Texto centralizado no campo */
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  margin-bottom: 8px;
+}
+
+/* Estado de foco do campo — borda dourada */
+.boas-vindas-input:focus {
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.15);
+}
+
+/* Estado de erro do campo — borda vermelha */
+.boas-vindas-input.erro {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px rgba(192,57,43,0.15);
+}
+
+/* Mensagem de erro abaixo do campo */
+.boas-vindas-erro {
+  display: block;          /* Ocupa linha própria */
+  font-size: 0.8rem;
+  color: var(--danger);
+  margin-bottom: 20px;
+  min-height: 18px;        /* Reserva espaço mesmo quando vazio */
+
+  /* Começa invisível — o JS adiciona classe 'visivel' para mostrar */
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+/* Classe adicionada pelo JS para exibir a mensagem de erro */
+.boas-vindas-erro.visivel {
+  opacity: 1;
+}
+
+/* Botão "Continuar" */
+.boas-vindas-btn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--accent-gold), var(--accent-dark));
+  color: #1a1a2e;
+  border: none;
+  border-radius: 14px;
+  padding: 15px;
+  font-family: 'Lato', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 16px rgba(201,168,76,0.30);
+  margin-top: 4px;
+}
+
+.boas-vindas-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(201,168,76,0.40);
+}
+
+.boas-vindas-btn:active {
+  transform: translateY(0);
+}
+
+/* Animação de saída — some para cima */
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* Animação de entrada do card — sobe suavemente */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsivo — ajusta padding em telas pequenas */
+@media (max-width: 480px) {
+  .boas-vindas-card {
+    padding: 36px 24px;
+  }
+  .boas-vindas-titulo {
+    font-size: 1.5rem;
+  }
+}

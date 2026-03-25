@@ -19,7 +19,7 @@
 
   <title>Diário de Bordo</title>
 
-  <!-- Google Fonts: Playfair Display (títulos) + (corpo de texto) -->
+  <!-- Google Fonts: Playfair Display (títulos) + Lato (corpo de texto) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
@@ -100,7 +100,8 @@
       <header class="page-header">
         <!-- Data por extenso — preenchida via JS -->
         <div class="page-date" id="currentDate"></div>
-        <h1 class="page-title">Olá,<br/><em>comece suas anotações.</em></h1>
+        <!-- O span#nomeUsuario é preenchido pelo JS com o nome salvo -->
+        <h1 class="page-title">Olá <span id="nomeUsuario"></span><br/><em>comece suas anotações.</em></h1>
       </header>
 
       <!-- ---- Formulário para criar nova nota ---- -->
@@ -188,6 +189,47 @@
         <button class="btn-cancel" id="btnCancelDelete">Cancelar</button>
         <button class="btn-confirm-delete" id="btnConfirmDelete">Remover</button>
       </div>
+    </div>
+  </div>
+
+  <!-- =====================================================
+       TELA DE BOAS-VINDAS (pergunta o nome do usuário)
+       Exibida apenas na primeira vez que o app é aberto.
+       O JS controla quando mostrar ou ocultar via classe ativa.
+  ====================================================== -->
+  <div class="boas-vindas-overlay" id="boasVindasOverlay">
+    <div class="boas-vindas-card">
+
+      <!-- Ícone do diário no topo da tela de boas-vindas -->
+      <img
+        src="icons/icon-192.png"
+        alt="Ícone Diário de Bordo"
+        class="boas-vindas-icone" />
+
+      <!-- Título e pergunta ao usuário -->
+      <h1 class="boas-vindas-titulo">Diário de Bordo</h1>
+      <p class="boas-vindas-pergunta">Olá! Qual o seu nome?</p>
+
+      <!-- Campo onde o usuário digita o nome
+           maxlength limita a 40 caracteres -->
+      <input
+        type="text"
+        id="inputNome"
+        class="boas-vindas-input"
+        placeholder="Digite seu nome..."
+        maxlength="40"
+        autocomplete="off" />
+
+      <!-- Mensagem de erro exibida se o campo estiver vazio ou inválido -->
+      <span class="boas-vindas-erro" id="erroNome">
+        Por favor, insira seu nome.
+      </span>
+
+      <!-- Botão que confirma o nome e abre o aplicativo -->
+      <button class="boas-vindas-btn" id="btnContinuar">
+        Continuar
+      </button>
+
     </div>
   </div>
 

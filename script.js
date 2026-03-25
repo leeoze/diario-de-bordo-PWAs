@@ -4,6 +4,137 @@
    ============================================================ */
 
 /* ------------------------------------------------------------
+   TELA DE BOAS-VINDAS — coleta o nome do usuário
+   Executada automaticamente ao iniciar o aplicativo.
+   O nome é salvo no localStorage e exibido no cabeçalho.
+------------------------------------------------------------ */
+
+/**
+ * Verifica se o usuário já cadastrou um nome anteriormente.
+ * Se sim, pula a tela de boas-vindas e exibe o nome salvo.
+ * Se não, exibe a tela pedindo o nome.
+ *
+ * localStorage.getItem('diario-nome') retorna:
+ *   - O nome salvo (string) se já existir
+ *   - null se for a primeira vez
+ */
+function inicializarBoasVindas() {
+  // Tenta recuperar o nome salvo no localStorage
+  const nomeSalvo = localStorage.getItem('diario-nome');
+
+  if (nomeSalvo) {
+    // Já existe um nome salvo: pula a tela e exibe o nome
+    ocultarTelaBoasVindas();
+    exibirNomeNaTela(nomeSalvo);
+  } else {
+    // Primeira vez: mostra a tela de boas-vindas
+    // O overlay já está visível no HTML por padrão
+    // Foca automaticamente no campo de nome para melhor UX
+    document.getElementById('inputNome').focus();
+  }
+}
+
+/**
+ * Valida o nome digitado pelo usuário.
+ * Regras:
+ *   - Não pode estar vazio
+ *   - Só aceita letras (com acentos), números e espaços
+ *   - Mínimo de 2 caracteres
+ *
+ * @param {string} nome - O texto digitado pelo usuário
+ * @returns {boolean} true se válido, false se inválido
+ */
+function validarNome(nome) {
+  // trim() remove espaços no início e no fim
+  const nomeLimpo = nome.trim();
+
+  // Verifica tamanho mínimo
+  if (nomeLimpo.length < 2) return false;
+
+  // Expressão regular: permite letras (incluindo acentuadas),
+  // números e espaços — bloqueia símbolos como !@#$%
+  const regexValido = /^[A-Za-zÀ-ÿ0-9 ]+$/;
+  return regexValido.test(nomeLimpo);
+}
+
+/**
+ * Salva o nome no localStorage e faz a transição para o app.
+ * Chamada quando o usuário clica em Continuar.
+ */
+function confirmarNome() {
+  const inputNome  = document.getElementById('inputNome');
+  const erroNome   = document.getElementById('erroNome');
+  const nome       = inputNome.value.trim();
+
+  // Valida o nome antes de prosseguir
+  if (!validarNome(nome)) {
+    // Mostra o campo com borda vermelha
+    inputNome.classList.add('erro');
+    // Exibe a mensagem de erro abaixo do campo
+    erroNome.classList.add('visivel');
+    // Foca novamente no campo para o usuário corrigir
+    inputNome.focus();
+    return; // Para a execução aqui — não avança
+  }
+
+  // Nome válido: remove indicadores de erro (se existirem)
+  inputNome.classList.remove('erro');
+  erroNome.classList.remove('visivel');
+
+  // Salva o nome no localStorage para não perguntar novamente
+  localStorage.setItem('diario-nome', nome);
+
+  // Exibe o nome no cabeçalho da tela principal
+  exibirNomeNaTela(nome);
+
+  // Anima a saída da tela de boas-vindas
+  ocultarTelaBoasVindas();
+}
+
+/**
+ * Oculta a tela de boas-vindas com animação de saída.
+ * A classe 'oculto' dispara a animação CSS fadeOut.
+ * Após a animação (400ms), remove o elemento do fluxo visual
+ * usando display:none para não interferir na página.
+ */
+function ocultarTelaBoasVindas() {
+  const overlay = document.getElementById('boasVindasOverlay');
+  // Adiciona classe que dispara animação CSS de saída
+  overlay.classList.add('oculto');
+  // Aguarda a animação terminar (400ms) e então esconde de vez
+  setTimeout(() => {
+    overlay.style.display = 'none';
+  }, 400);
+}
+
+/**
+ * Insere o nome do usuário no elemento span do cabeçalho.
+ * O HTML tem: <h1>Olá, <span id=nomeUsuario></span></h1>
+ * Esta função preenche esse span com o nome salvo.
+ *
+ * @param {string} nome - Nome a exibir na tela principal
+ */
+function exibirNomeNaTela(nome) {
+  document.getElementById('nomeUsuario').textContent = nome + ',';
+}
+
+// ── Eventos da tela de boas-vindas ──────────────────────────
+
+// Clique no botão Continuar — salva o nome e avança
+document.getElementById('btnContinuar').addEventListener('click', confirmarNome);
+
+// Tecla Enter no campo de nome — mesmo comportamento do botão
+document.getElementById('inputNome').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') confirmarNome();
+});
+
+// Remove o estilo de erro enquanto o usuário digita
+document.getElementById('inputNome').addEventListener('input', () => {
+  document.getElementById('inputNome').classList.remove('erro');
+  document.getElementById('erroNome').classList.remove('visivel');
+});
+
+/* ------------------------------------------------------------
    GERENCIAMENTO DE TEMA (claro / escuro)
 ------------------------------------------------------------ */
 
@@ -358,6 +489,9 @@ if ('serviceWorker' in navigator) {
 }
 
 /* ------------------------------------------------------------
-   INICIALIZAÇÃO — renderiza as notas ao abrir a página
+   INICIALIZAÇÃO — ordem de execução ao abrir a página
+   1. inicializarBoasVindas() — verifica se já tem nome salvo
+   2. renderizarNotas()       — carrega as notas do localStorage
 ------------------------------------------------------------ */
-renderizarNotas();
+inicializarBoasVindas();
+renderizarNotas();;
