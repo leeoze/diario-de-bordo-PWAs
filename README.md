@@ -148,10 +148,20 @@ O cache é versionado (`diario-de-bordo-v1`). Para forçar atualização em prod
 
 ### Execução local
 
+### 1. Clonar o repositório
+
+```bash
+git clone <https://github.com/leeoze/diario-de-bordo-PWAs.git>
+cd diario-de-bordo-PWAs
+```
+
+----
+
+### 2. Clonar o repositório
 **VS Code Live Server (recomendado):**
 1. Abra a pasta do projeto no VS Code
 2. Instale a extensão **Live Server**
-3. Clique em **"Go Live"** na barra inferior
+3. Clique em **"Go Live"** (no arquivo **index.html**)
 
 ---
 
@@ -190,3 +200,4 @@ Este projeto tem licença gratuita para uso.
 <p align="center">
   Feito para preservar suas memórias.
 </p>
+
